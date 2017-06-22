@@ -69,8 +69,13 @@ fun! s:HighlightOperators()
   " for the last element of the regex, see :h /\@!
   " basically, searching for "/" is more complex since we want to avoid
   " matching against "//" or "/*" which would break C++ comment highlighting
-  syntax match OperatorChars "?\|+\|-\|\*\|;\|:\|,\|<\|>\|&\||\|!\|\~\|%\|=\|)\|(\|{\|}\|\.\|\[\|\]\|/\(/\|*\)\@!"
+  syntax match OperatorChars "?\|+\|\*\|;\|:\|,\|<\|>\|&\||\|!\|\~\|%\|=\|)\|(\|{\|}\|\.\|\[\|\]\|/\(/\|*\)\@!"
 
+  if (&filetype == "lua")
+    syntax match OperatorChars "-\(-\)\@!"
+  else
+    syntax match OperatorChars "-"
+  endif
 
   if g:ophigh_highlight_link_group != "" 
     exec "hi link OperatorChars " . g:ophigh_highlight_link_group
