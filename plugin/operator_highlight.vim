@@ -69,7 +69,16 @@ fun! s:HighlightOperators()
   " for the last element of the regex, see :h /\@!
   " basically, searching for "/" is more complex since we want to avoid
   " matching against "//" or "/*" which would break C++ comment highlighting
-  syntax match OperatorChars "[?+*;:,<>&|!~%=)(}{\]\[.]\|/\(/\|*\)\@!"
+  syntax match OperatorChars "/\(/\|*\)\@!"
+
+  " add :, but ignore for ruby symbols
+  if (&filetype == "ruby")
+    syntax match OperatorChars ":\(\w\+\)\@!"
+  else
+    syntax match OperatorChars ":"
+  endif
+
+  syntax match OperatorChars "[?+*;,<>&|!~%=)(}{\]\[.]"
 
   if (&filetype == "lua")
     syntax match OperatorChars "-\(-\)\@!"
