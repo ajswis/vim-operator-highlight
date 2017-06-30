@@ -71,6 +71,11 @@ call s:IgnoreFiletypeIfNotSet('sh')
 call s:IgnoreFiletypeIfNotSet('bash')
 call s:IgnoreFiletypeIfNotSet('notes')
 call s:IgnoreFiletypeIfNotSet('jinja')
+" Too many edge cases
+call s:IgnoreFiletypeIfNotSet('eruby')
+call s:IgnoreFiletypeIfNotSet('jsp')
+call s:IgnoreFiletypeIfNotSet('haml')
+call s:IgnoreFiletypeIfNotSet('coffee')
 
 fun! s:HighlightOperators()
   if get( g:ophigh_filetypes_to_ignore, &filetype, 0 )
@@ -79,10 +84,16 @@ fun! s:HighlightOperators()
 
   " add :, but ignore for ruby symbols
   if (&filetype == "ruby")
-    syntax match OperatorChars ":\(\w\+\)\@!"
-    syntax match OperatorChars /::/
+    syntax match OperatorChars "/\(.\{-}/\)\@!" " Can't get non-greedy to work
+    syntax match OperatorChars "::\|:\(\w\)\@!"
+    syntax match OperatorChars "||\||=\||\(\d\)\@=\||\(\w\)\@!\(.\{-\}|\)\@!"
   else
-    syntax match OperatorChars ":"
+    syntax match OperatorChars "[|:]"
+  endif
+
+  " Handle LaTeX % special case
+  if !(&filetype == "tex")
+    syntax match OperatorChars "%"
   endif
 
   " Highlight -, but not -- for lua comments
@@ -96,7 +107,8 @@ fun! s:HighlightOperators()
   " basically, searching for "/" is more complex since we want to avoid
   " matching against "//" or "/*" which would break C++ comment highlighting
   syntax match OperatorChars "/\(/\|*\)\@!"
-  syntax match OperatorChars "[?+*;,<>&|!~%=.]"
+  " Generally safe...
+  syntax match OperatorChars "[?+*;,<>&!~=.]"
   syntax match ContainerChars "[)(}{\]\[]"
 
   if g:ophigh_highlight_link_group != ""
