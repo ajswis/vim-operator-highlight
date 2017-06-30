@@ -79,8 +79,8 @@ fun! s:HighlightOperators()
 
   " add :, but ignore for ruby symbols
   if (&filetype == "ruby")
-    syntax match OperatorChars /::/
     syntax match OperatorChars ":\(\w\+\)\@!"
+    syntax match OperatorChars /::/
   else
     syntax match OperatorChars ":"
   endif
