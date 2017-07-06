@@ -82,43 +82,44 @@ fun! s:HighlightOperators()
     return
   endif
 
-  " add :, but ignore for ruby symbols
+  " Ruby edgecases:
+  "   add :: and : but ignore for ruby symbols
+  "   block params | hightlighting
   if (&filetype == "ruby")
-    "syn match OperatorChars "/\(.\{-}/\)\@!" " FIXME: regex region match
-    syntax match OperatorChars "::\|:\(\w\)\@!"
-    syntax match OperatorChars "||\||=\||\(\d\)\@=\||\(\w\)\@!\(.\{-\}|\)\@!"
+    "syn match OperatorChars +/\(.\{-}/\)\@!+ " FIXME: regex region match
+    syn match OperatorChars /::\|:\(\w\)\@!/
+    syn match OperatorChars /||\||=\||\(\d\)\@=\||\(\w\)\@!\(.\{-\}|\)\@!/
   else
-    syntax match OperatorChars "[|:]"
+    syn match OperatorChars /[|:]/
   endif
 
-  " Handle LaTeX % special case
+  " LaTeX edgecase: % is special
   if !(&filetype == "tex")
-    syntax match OperatorChars "%"
+    syn match OperatorChars /%/
   endif
 
-  " Highlight -, but not -- for lua comments
+  " Lua comment edgecase: highlight -, but not --
   if (&filetype == "lua")
-    syntax match OperatorChars "-\(-\)\@!"
+    syn match OperatorChars /-\(-\)\@!/
   else
-    syntax match OperatorChars "-"
+    syn match OperatorChars /-/
   endif
 
-  " consuming both . and ( clobers go type assertion region matching
+  " Go type assertion edgecase: consuming both . and ( clobers go type assertion
+  " region matching
   if (&filetype == "go")
-    syn match OperatorChars "\.\((\)\@!"
+    syn match OperatorChars /\.\((\)\@!/
   else
-    syn match OperatorChars "\."
+    syn match OperatorChars /\./
   endif
 
-  " for the last element of the regex, see :h /\@!
-  " basically, searching for "/" is more complex since we want to avoid
-  " matching against "//" or "/*" which would break C++ comment highlighting
-  syntax match OperatorChars "/\(/\|*\)\@!"
-  " Generally safe...
-  syntax match OperatorChars "[?+*;,<>&!~=]"
-  syn region ParenContainer   matchgroup=ContainerChars start="(" end=")" transparent
-  syn region BraceContainer   matchgroup=ContainerChars start="{" end="}" transparent
-  syn region BracketContainer matchgroup=ContainerChars start="\[" end="\]" transparent
+  syn match OperatorChars +/\(/\|*\)\@!+
+  " These are generally safe...
+  syn match OperatorChars /[?+*;,<>&!~=]/
+
+  syn region ParenContainer   matchgroup=ContainerChars start=/(/ end=/)/ transparent
+  syn region BraceContainer   matchgroup=ContainerChars start=/{/ end=/}/ transparent
+  syn region BracketContainer matchgroup=ContainerChars start=/\[/ end=/\]/ transparent
 
   if g:ophigh_highlight_link_group != ""
     exec "hi link OperatorChars " . g:ophigh_highlight_link_group
