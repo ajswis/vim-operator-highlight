@@ -84,7 +84,7 @@ fun! s:HighlightOperators()
 
   " add :, but ignore for ruby symbols
   if (&filetype == "ruby")
-    syntax match OperatorChars "/\(.\{-}/\)\@!" " Can't get non-greedy to work
+    "syn match OperatorChars "/\(.\{-}/\)\@!" " FIXME: regex region match
     syntax match OperatorChars "::\|:\(\w\)\@!"
     syntax match OperatorChars "||\||=\||\(\d\)\@=\||\(\w\)\@!\(.\{-\}|\)\@!"
   else
