@@ -108,8 +108,10 @@ fun! s:HighlightOperators()
   " matching against "//" or "/*" which would break C++ comment highlighting
   syntax match OperatorChars "/\(/\|*\)\@!"
   " Generally safe...
-  syntax match OperatorChars "[?+*;,<>&!~=.]"
-  syntax match ContainerChars "[)(}{\]\[]"
+  syntax match OperatorChars "[?+*;,<>&!~=]"
+  syn region ParenContainer   matchgroup=ContainerChars start="(" end=")" transparent
+  syn region BraceContainer   matchgroup=ContainerChars start="{" end="}" transparent
+  syn region BracketContainer matchgroup=ContainerChars start="\[" end="\]" transparent
 
   if g:ophigh_highlight_link_group != ""
     exec "hi link OperatorChars " . g:ophigh_highlight_link_group
