@@ -103,6 +103,13 @@ fun! s:HighlightOperators()
     syntax match OperatorChars "-"
   endif
 
+  " consuming both . and ( clobers go type assertion region matching
+  if (&filetype == "go")
+    syn match OperatorChars "\.\((\)\@!"
+  else
+    syn match OperatorChars "\."
+  endif
+
   " for the last element of the regex, see :h /\@!
   " basically, searching for "/" is more complex since we want to avoid
   " matching against "//" or "/*" which would break C++ comment highlighting
